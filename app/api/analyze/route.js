@@ -3,23 +3,34 @@ export async function POST(req) {
     const { text } = await req.json();
 
     const prompt = `
-You are a risk analysis engine.
+You are a strict contract risk analyzer.
 
-Analyze the text and return ONLY valid JSON.
-NO explanations. NO markdown. NO extra text.
+Analyze the given contract text and detect real risks.
+
+Return ONLY pure JSON.
+No explanation.
+No markdown.
 
 Format:
 {
-  "risks": [
-    { "level": "red", "title": "...", "desc": "..." },
-    { "level": "yellow", "title": "...", "desc": "..." },
-    { "level": "green", "title": "...", "desc": "..." }
-  ]
+ "risks":[
+   {"level":"red|yellow|green","title":"...","desc":"..."}
+ ]
 }
+
+Rules:
+- Return ONLY risks actually present in text
+- Do NOT force all 3 levels
+- If only red risk → return only red
+- If no green clause → don't add green
+- red = serious legal or financial risk
+- yellow = warning or unclear clause
+- green = good clause if present
 
 TEXT:
 ${text}
 `;
+
 
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
@@ -35,8 +46,9 @@ ${text}
 
     const result = await response.json();
 
-    let raw =
-      result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    let raw = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+
 
     console.log("RAW GEMINI RESPONSE:", raw);
 

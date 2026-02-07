@@ -76,23 +76,23 @@ const loadHistory = async () => {
 
 
   const getBorderColor = (level) => {
-    if (level === "red") return "border-red-500";
-    if (level === "yellow") return "border-yellow-500";
-    if (level === "green") return "border-green-500";
+    if (level === "high") return "border-red-500";
+    if (level === "medium") return "border-yellow-500";
+    if (level === "low") return "border-green-500";
     return "border-gray-300";
   };
 
   return (
     <div className="min-h-screen">
       {/* Navbar */}
-      <div className="w-full px-6 py-4 border-b flex justify-between items-center">
-        <h1 className="text-xl font-bold">SpecCheck</h1>
-        <button className="px-4 py-2 border rounded">Login</button>
+      <div className="w-full bg-slate-950 px-6 py-4 border-b flex justify-between items-center">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent tracking-wide animate-pulse">SpecCheck</h1>
+        <button className="px-4 py-2 border rounded animate-bounce text-white bg-gradient-to-r from-indigo-500 to-purple-500 ">Login</button>
       </div>
 
       {/* Input */}
-      <div className="max-w-3xl mx-auto mt-8 px-4">
-        <h2 className="text-2xl font-semibold mb-4">
+      <div className="max-w-3xl bg-gray-900 border border-gray-700 rounded-2xl mx-auto mt-8 px-4">
+        <h2 className="text-2xl font-semibold mb-4 text-purple-500  ">
           Paste your spec or contract text
         </h2>
 
@@ -105,7 +105,9 @@ const loadHistory = async () => {
 
         <button
           onClick={handleAnalyze}
-          className="mt-4 px-6 py-2 bg-black text-white rounded"
+         className="mt-4 px-6 py-2 rounded-lg bg-red-500 text-white font-medium
+hover:bg-red-600 transition-all duration-300 
+hover:scale-105 shadow-md hover:shadow-red-500/30"
         >
           {loading ? "Analyzing..." : "Analyze"}
         </button>
@@ -128,22 +130,35 @@ const loadHistory = async () => {
         ))}
       </div>
       {/* History */}
-<div className="max-w-3xl mx-auto mt-12 px-4">
-  <h2 className="text-xl font-semibold mb-4">Previous Analyses</h2>
+<div className="max-w-3xl mx-auto mt-14 px-4">
+  <h2 className="text-2xl font-semibold mb-6 text-yellow-300">
+    Previous Analyses
+  </h2>
 
   {history.map((item) => (
     <div
       key={item.id}
-      className="mb-3 p-3 border rounded text-sm"
+      className="mb-4 p-5 bg-gray-900 border border-gray-700 rounded-xl"
     >
-      <p className="font-medium">Input:</p>
-      <p className="text-gray-400 mb-2">{item.textPreview}...</p>
+      {/* Input text */}
+      <p className="font-medium text-gray-200 mb-1">Input:</p>
+      <p className="text-gray-400 mb-4 text-sm">
+        {item.textPreview}...
+      </p>
 
-      <div className="flex gap-2 text-xs">
+      {/* Risk badges */}
+      <div className="flex flex-wrap gap-2 text-xs">
         {item.risks?.map((r, i) => (
           <span
             key={i}
-            className="px-2 py-1 border rounded capitalize"
+            className={`px-3 py-1 rounded-full font-medium capitalize
+            ${
+              r.level === "high"
+                ? "bg-red-600 text-white"
+                : r.level === "medium"
+                ? "bg-yellow-500 text-black"
+                : "bg-green-600 text-white"
+            }`}
           >
             {r.level}
           </span>
@@ -152,6 +167,7 @@ const loadHistory = async () => {
     </div>
   ))}
 </div>
+
 
     </div>
   );
