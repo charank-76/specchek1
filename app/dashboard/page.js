@@ -3,10 +3,21 @@ import { useState } from "react";
 import { collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useEffect } from "react";
+import { useRouter} from "next/navigation";
+
+
+
 
 
 
 export default function Home() {
+
+  const router = useRouter();
+
+   const clickTOLogin = () => {
+     router.push("/login");
+   }
+
   const [text, setText] = useState("");
   const [risks, setRisks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,6 +32,8 @@ useEffect(() => {
     alert("Please paste some text first");
     return;
   }
+ 
+  
 
   setLoading(true);
   setRisks([]);
