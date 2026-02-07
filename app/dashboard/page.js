@@ -3,10 +3,21 @@ import { useState } from "react";
 import { collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useEffect } from "react";
+import { useRouter} from "next/navigation";
+
+
+
 
 
 
 export default function Home() {
+
+  const router = useRouter();
+
+   const clickTOLogin = () => {
+     router.push("/login");
+   }
+
   const [text, setText] = useState("");
   const [risks, setRisks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,6 +32,8 @@ useEffect(() => {
     alert("Please paste some text first");
     return;
   }
+ 
+  
 
   setLoading(true);
   setRisks([]);
@@ -87,7 +100,7 @@ const loadHistory = async () => {
       {/* Navbar */}
       <div className="w-full px-6 py-4 border-b flex justify-between items-center">
         <h1 className="text-xl font-bold">SpecCheck</h1>
-        <button className="px-4 py-2 border rounded">Login</button>
+        <button onClick={clickTOLogin} className="px-4 py-2 border rounded hover:bg-gray-200 hover:text-black">Login</button>
       </div>
 
       {/* Input */}
