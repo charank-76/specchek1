@@ -6,76 +6,82 @@ export async function POST(req) {
       return new Response(JSON.stringify({ risks: [] }), { status: 200 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      console.error("Missing Gemini API Key");
-      throw new Error("API configuration error");
-    }
+    // 🔑 PUT KEY HERE
+    const apiKey = "";
 
     const prompt = `
-      You are a legal contract analyzer.
-      Task: Scan the provided text and identify potential risks.
-      
-      Rules:
-      1. Extract ONLY exact sentences from the input.
-      2. Classify as: "red" (high risk), "yellow" (medium/unclear), or "green" (low risk/standard).
-      3. Do not paraphrase.
-      4. Output MUST be valid JSON.
-      5. safetySettings
+You are a strict contract risk analyzer.
 
-      Format:
-      {
-        "risks": [
-          { "level": "red", "text": "exact sentence here" },
-          { "level": "yellow", "text": "exact sentence here" },
-          { "level": "green", "text": "exact sentence here" }
-        ]
-      }
+Return ONLY valid JSON.
+No explanation. No markdown.
 
-      TEXT:
-      ${text}
-    `;
+Format:
+{
+ "risks":[
+   {"level":"red|yellow|green","title":"...","desc":"..."}
+ ]
+}
+
+TEXT:
+${text}
+`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+{
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    contents: [
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          // This "generationConfig" helps force JSON output
-          generationConfig: {
-            response_mime_type: "application/json",
-          },
-        }),
+        parts: [{ text: prompt }]
       }
-    );
+    ]
+  }),
+}
+);
 
-    const result = await response.json();
-    const outputText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (!outputText) throw new Error("Empty AI response");
+const result = await response.json();
+console.log("FULL GEMINI:", result);
 
-    // Clean and Parse
-    let parsedData;
-    try {
-      const cleaned = outputText.replace(/```json|```/g, "").trim();
-      parsedData = JSON.parse(cleaned);
-    } catch (parseError) {
-      console.error("JSON Parse Error:", outputText);
-      throw new Error("Invalid AI format");
-    }
+// ✅ FIRST create raw
+let raw = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-    return new Response(JSON.stringify(parsedData), {
+// 🔥 THEN clean markdown
+raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+
+console.log("RAW:", raw);
+
+if (!raw) throw new Error("Empty Gemini response");
+
+let json;
+try {
+  json = JSON.parse(raw);
+} catch {
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("Invalid JSON");
+  json = JSON.parse(match[0]);
+}
+
+
+    return new Response(JSON.stringify(json), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
 
   } catch (err) {
     console.error("ANALYZE ERROR:", err);
+
     return new Response(
       JSON.stringify({
-        risks: [{ level: "red", text: "Analysis failed. Please check your connection or try a shorter text." }],
+        risks: [
+          {
+            level: "red",
+            title: "API Error",
+            desc: "Gemini not responding correctly",
+          },
+        ],
       }),
       { status: 200 }
     );

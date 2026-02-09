@@ -92,12 +92,12 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white">
       {/* Navbar */}
       <div className="w-full bg-slate-950 px-6 py-4 border-b border-gray-800 flex justify-between items-center">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent animate-pulse">
           SpecCheck
         </h1>
         <button 
           onClick={clickToLogin}
-          className="px-4 py-2 rounded bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition"
+          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition animate-bounce"
         >
           Profile
         </button>
@@ -135,8 +135,22 @@ export default function Home() {
         key={index}
         className={`mb-4 p-4 border-l-4 rounded bg-gray-900 ${getBorderColor(risk.level)}`}
       >
-        <h3 className="font-semibold capitalize text-lg">{risk.level} risk</h3>
-        <p className="text-sm mt-1 text-gray-300">{risk.text}</p>
+        {/* Risk Level */}
+        <h3 className="font-bold capitalize text-lg">
+          {risk.level === "red" && "🔴 Red Risk"}
+          {risk.level === "yellow" && "🟡 Yellow Risk"}
+          {risk.level === "green" && "🟢 Safe"}
+        </h3>
+
+        {/* TITLE */}
+        <p className="mt-2 font-semibold text-white">
+          {risk.title}
+        </p>
+
+        {/* DESCRIPTION */}
+        <p className="text-sm mt-1 text-gray-300">
+          {risk.desc}
+        </p>
       </div>
     ))
   ) : !loading && text && (
