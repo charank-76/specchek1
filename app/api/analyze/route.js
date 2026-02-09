@@ -1,95 +1,91 @@
 export async function POST(req) {
   try {
+    // 1️⃣ Read input
     const { text } = await req.json();
 
+    if (!text || !text.trim()) {
+      return new Response(
+        JSON.stringify({ risks: [] }),
+        { status: 200 }
+      );
+    }
+ console.log("KEY EXISTS:", !!process.env.GEMINI_API_KEY);
+    // 2️⃣ Prompt (extract exact sentences only)
     const prompt = `
-You are a strict contract risk analyzer.
+You analyze contract text.
 
-Analyze the given contract text and detect real risks.
+Rules:
+- Scan the entire contract
+- Pick ONLY exact sentences from the input
+- Do NOT rewrite or invent text
+- Classify each sentence as:
+  - high = serious risk
+  - medium = unclear or warning
+  - low = good clause
+- Do NOT force all levels
 
-Return ONLY pure JSON.
-No explanation.
-No markdown.
+Return ONLY JSON.
 
 Format:
 {
- "risks":[
-   {"level":"red|yellow|green","title":"...","desc":"..."}
- ]
+  "risks": [
+    {
+      "level": "high|medium|low",
+      "text": "exact sentence from input"
+    }
+  ]
 }
-
-Rules:
-- Return ONLY risks actually present in text
-- Do NOT force all 3 levels
-- If only red risk → return only red
-- If no green clause → don't add green
-- red = serious legal or financial risk
-- yellow = warning or unclear clause
-- green = good clause if present
 
 TEXT:
 ${text}
 `;
 
-
+    // 3️⃣ Gemini API call (AI Studio ONLY)
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
+      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" +
         process.env.GEMINI_API_KEY,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [
+            {
+              parts: [{ text: prompt }],
+            },
+          ],
         }),
       }
     );
 
     const result = await response.json();
 
-    let raw = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+    // 4️⃣ Extract AI text safely
+    const output =
+      result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-
-    console.log("RAW GEMINI RESPONSE:", raw);
-
-    // 🔥 Try extracting JSON safely
-    let json;
-    try {
-      json = JSON.parse(raw);
-    } catch {
-      const match = raw.match(/\{[\s\S]*\}/);
-      if (match) {
-        json = JSON.parse(match[0]);
-      } else {
-        throw new Error("Invalid JSON from Gemini");
-      }
+    if (!output) {
+      throw new Error("Empty AI response");
     }
 
-    return new Response(JSON.stringify(json), {
+    // 5️⃣ Parse JSON safely
+    const cleaned = output.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(cleaned);
+
+    return new Response(JSON.stringify(parsed), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
+
   } catch (err) {
     console.error("ANALYZE ERROR:", err);
 
-    // ✅ SAFE FALLBACK (VERY IMPORTANT)
+    // 6️⃣ Safe fallback (frontend won’t crash)
     return new Response(
       JSON.stringify({
         risks: [
           {
-            level: "red",
-            title: "Unclear support duration",
-            desc: "Maintenance duration is not specified",
-          },
-          {
-            level: "yellow",
-            title: "Jurisdiction risk",
-            desc: "Client jurisdiction may cause legal complexity",
-          },
-          {
-            level: "green",
-            title: "Confidentiality clause",
-            desc: "Sensitive data protection is clearly stated",
+            level: "high",
+            text: "Analysis failed. Please try again.",
           },
         ],
       }),
