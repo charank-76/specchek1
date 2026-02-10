@@ -12,7 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState([]);
 
-  // Load history on page load
+
   useEffect(() => {
     loadHistory();
   }, []);
@@ -48,7 +48,7 @@ export default function Home() {
     setRisks([]);
 
     try {
-      // 1. AI Analysis Call
+   
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +61,7 @@ export default function Home() {
       const detectedRisks = data.risks || [];
       setRisks(detectedRisks);
 
-      // 2. Save to Firestore (Non-blocking)
+     
       try {
         await addDoc(collection(db, "reports"), {
           inputText: text,
@@ -69,7 +69,7 @@ export default function Home() {
           risks: detectedRisks,
           createdAt: new Date(),
         });
-        loadHistory(); // Refresh the list
+        loadHistory(); 
       } catch (fireErr) {
         console.warn("History save failed:", fireErr);
       }
@@ -93,7 +93,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navbar */}
+   
       <div className="w-full bg-slate-950 px-6 py-4 border-b border-gray-800 flex justify-between items-center">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent animate-pulse">
           SpecCheck
@@ -115,7 +115,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Input Area */}
+      
       <div className="max-w-3xl bg-gray-900 border border-gray-700 rounded-2xl mx-auto mt-8 px-6 py-8">
         <h2 className="text-2xl font-semibold mb-4 text-purple-400">
           Paste your spec or contract text
@@ -139,7 +139,7 @@ export default function Home() {
         </button>
       </div>
 
-    {/* Live Results */}
+   
 <div className="max-w-3xl mx-auto mt-10 px-4">
   {risks.length > 0 ? (
     risks.map((risk, index) => (
@@ -147,19 +147,18 @@ export default function Home() {
         key={index}
         className={`mb-4 p-4 border-l-4 rounded bg-gray-900 ${getBorderColor(risk.level)}`}
       >
-        {/* Risk Level */}
+      
         <h3 className="font-bold capitalize text-lg">
           {risk.level === "red" && "🔴 Red Risk"}
           {risk.level === "yellow" && "🟡 Yellow Risk"}
           {risk.level === "green" && "🟢 Safe"}
         </h3>
 
-        {/* TITLE */}
+      
         <p className="mt-2 font-semibold text-white">
           {risk.title}
         </p>
 
-        {/* DESCRIPTION */}
         <p className="text-sm mt-1 text-gray-300">
           {risk.desc}
         </p>
@@ -170,7 +169,6 @@ export default function Home() {
   )}
 </div>
 
-      {/* History Section */}
       <div className="max-w-3xl mx-auto mt-14 px-4 pb-20">
         <h2 className="text-2xl font-semibold mb-6 text-yellow-300 border-b border-yellow-300/20 pb-2">
           Previous Analyses

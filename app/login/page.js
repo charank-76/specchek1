@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { loginWithEmail } from "../../lib/auth";
-import { useUserStore} from "../store/useUserStore";
-
+import { useUserStore } from "../store/useUserStore";
 import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
@@ -11,57 +10,52 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const router = useRouter();
   const setUserEmail = useUserStore((state) => state.setUserEmail);
-  //  const semail = useUserStore((state) => state.email);
-  //  const spassword = useUserStore((state) => state.password);
-const handleLogin = async () => {
-  if (!email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
 
-  try {
-    await loginWithEmail(email, password);
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
 
-    // save email in zustand store
-    setUserEmail(email);
+    try {
+      await loginWithEmail(email, password);
+      setUserEmail(email);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Invalid email or password");
+    }
+  };
 
-    alert("Login successful!");
-    router.push("/dashboard");
-
-  } catch (error) {
-    console.error("Login failed:", error);
-    alert("Invalid email or password");
-  }
-};
   return (
-    <div className="min-h-screen flex justify-center items-center p-10 bg-amber-500">
-      <div>
-           
-      </div>
-      <div className="bg-white flex flex-col shadow-2xl rounded-2xl p-10 w-[500px] hover:scale-[1.02]">
-        <h1 className="text-3xl font-bold text-center text-amber-700 mb-6">
-          Login 
+    <div className="min-h-screen flex justify-center items-center bg-amber-500 px-4">
+     
+      <div
+        className="bg-white flex flex-col shadow-2xl rounded-2xl p-6 sm:p-10 w-full max-w-sm sm:max-w-md hover:scale-[1.02] transition"
+      >
+        <h1 className="text-2xl sm:text-3xl font-bold text-center text-amber-700 mb-6">
+          Login
         </h1>
-         
+
         <input
           type="email"
           placeholder="abc@gmail.com"
-          className="w-[400px] bg-white p-4 text-black"
+          className="w-full bg-white p-3 sm:p-4 mb-4 border rounded-lg text-black"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
           type="password"
-          placeholder="XXXXX"
-          className="w-[400px] bg-white p-4 text-black"
+          placeholder="Password"
+          className="w-full bg-white p-3 sm:p-4 mb-6 border rounded-lg text-black"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
           onClick={handleLogin}
-          className="bg-amber-700 p-3 my-3 text-white w-[200px] mx-auto rounded-2xl"
+          className="bg-amber-700 p-3 text-whitew-full sm:w-1/2 mx-auto rounded-2xl font-semibold hover:bg-amber-800 transition"
         >
           Sign In
         </button>
