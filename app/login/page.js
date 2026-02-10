@@ -11,17 +11,33 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   const router = useRouter();
   const setUserEmail = useUserStore((state) => state.setUserEmail);
+  //  const semail = useUserStore((state) => state.email);
+  //  const spassword = useUserStore((state) => state.password);
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      alert("Please fill all fields");
-      return;
-    }
+ const handleLogin = async () => {
+  if (!email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  try {
+    const user = await loginWithEmail(email, password);
+
+    if (!user) return;
+
+    setUserEmail(email); 
+    router.push("/dashboard");
+  } catch (error) {
+    console.error("Login failed:", error);
+    alert("Invalid email or password");
+  }
+
+
 
     try {
       await loginWithEmail(email, password);
       alert("Account logged in!");
-      setUserEmail(email);
+      // setUserEmail(email);
       router.push("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);

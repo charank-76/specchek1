@@ -6,8 +6,8 @@ export async function POST(req) {
       return new Response(JSON.stringify({ risks: [] }), { status: 200 });
     }
 
-    // 🔑 PUT KEY HERE
-    const apiKey = "";
+    //put the key here
+    const apiKey = "AIzaSyAow87DUyX_ENucJRhV3VlLUx95OuwuGTo";
 
     const prompt = `
 You are a strict contract risk analyzer.
@@ -44,11 +44,7 @@ ${text}
 
 const result = await response.json();
 console.log("FULL GEMINI:", result);
-
-// ✅ FIRST create raw
 let raw = result?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-// 🔥 THEN clean markdown
 raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
 
 console.log("RAW:", raw);

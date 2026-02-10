@@ -20,6 +20,9 @@ export default function Home() {
   const clickToLogin = () => {
     router.push("/profile");
   };
+  const clickTofeed = () => {
+    router.push("/feedback");
+  };
 
   const loadHistory = async () => {
     try {
@@ -95,12 +98,21 @@ export default function Home() {
         <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent animate-pulse">
           SpecCheck
         </h1>
-        <button 
+        <div className="gap-4 flex ">
+       
+         <button 
+          onClick={clickTofeed}
+          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition "
+        >
+          Feedback
+        </button>
+         <button 
           onClick={clickToLogin}
           className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition animate-bounce"
         >
           Profile
         </button>
+        </div>
       </div>
 
       {/* Input Area */}

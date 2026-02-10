@@ -5,16 +5,15 @@ import { useRouter} from "next/navigation";
 
 export default function ProfilePage(){
      
-    const userEmail = useUserStore((state) => state.userEmail);
-    const clearUserEmail = useUserStore((state) => state.clearUserEmail);
-    const router = useRouter();
+    const email = useUserStore((state) => state.email);
+     const router = useRouter();
 
     const handleLogout = () => {
-         clearUserEmail();
+   
          router.push("/login");
     }
      const handleDash = () => {
-        //  clearUserEmail();
+      
          router.push("/dashboard");
     }
 
@@ -26,7 +25,7 @@ export default function ProfilePage(){
         
         <div className="bg-amber-100 p-4 rounded-xl mb-6">
           <p className="text-amber-800">
-            You are logged in as: <span className="font-bold">{userEmail || "Guest"}</span>
+            You are logged in as: <span className="font-bold">{email || "Guest"}</span>
           </p>
         </div>
 <div className="flex flex-col gap-4 items-center">

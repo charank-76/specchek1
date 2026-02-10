@@ -1,15 +1,12 @@
-import { create } from "zustand";
-import { persisit, persist } from "zustand/middleware";
 
-export const useUserStore = create(
-     persist(
-         (set) => ({
-               userEmail : null,
-               setUserEmail : (email) =>set({userEmail : email}),
-               clearUserEmail : () => set({userEmail : null})
-         }),
-         {
-            name : "user-storage",
-         }
-     )
-);
+import {create } from 'zustand';
+
+export const useUserStore = create((set) => ({
+    semail: "",
+     spassword: "",
+    email: "",
+    setUserEmail:(email)=>set({email}),
+     setUserSEmail:(semail)=>set({semail}),
+    setUserSPassword:(spassword)=>set({spassword})
+
+}));

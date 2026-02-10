@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function FeedbackPage() {
   const [helpful, setHelpful] = useState(null);
   const [rating, setRating] = useState(3);
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
+  const router = useRouter();
+const handleDash = () => {
+      
+         router.push("/dashboard");
+    }
   const handleSubmit = () => {
     console.log({
       helpful,
@@ -25,10 +30,18 @@ export default function FeedbackPage() {
             Thanks for your feedback!
           </h2>
           <p className="text-gray-400 mt-2">We appreciate your response.</p>
+           <button 
+          onClick={handleDash}
+          className="bg-red-500 w-[200px] text-white px-6 py-2 rounded-lg hover:bg-red-600 mt-2  transition-colors"
+        >
+          DashBoard
+        </button>
         </div>
+       
       </div>
     );
   }
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black px-4">
@@ -101,6 +114,12 @@ export default function FeedbackPage() {
           className="w-full bg-yellow-400 text-black font-semibold py-3 rounded-lg shadow-md hover:bg-yellow-300 "
         >
           Submit Feedback
+        </button>
+        <button 
+          onClick={handleDash}
+          className="bg-red-500 w-[200px] text-white px-6 py-2 rounded-lg hover:bg-red-600 mt-2  transition-colors"
+        >
+          DashBoard
         </button>
       </div>
     </div>

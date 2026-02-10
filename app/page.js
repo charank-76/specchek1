@@ -4,20 +4,26 @@ import { createAccount } from "../lib/auth";
 
 
 import { useRouter } from "next/navigation";
+import { useUserStore} from "./store/useUserStore";
 
 export default function SignUpPage() {
-  const [email, setEmail] = useState("");      // ✅ fix
-  const [password, setPassword] = useState(""); // ✅ fix
+  const [semail, setSEmail] = useState("");      
+  const [spassword, setSPassword] = useState("");
   const router = useRouter();
+  //  const setUserSEmail = useUserStore((state) => state.setUserSEmail);
+  //  const setUserSPassword = useUserStore((state) => state.setUserSPassword);
 
   const handleSignup = async () => {
-    if (!email || !password) {
+    if (!semail || !spassword) {
       alert("Please fill all fields");
       return;
     }
 
+    // setUserSEmail(semail);
+    // setUserSPassword(spassword);
+
     try {
-      await createAccount(email, password);
+      await createAccount(semail, spassword);
       alert("Account created! Check your email for verification.");
       router.push("/login");
     } catch (err) {
@@ -38,8 +44,8 @@ export default function SignUpPage() {
             type="email"
             placeholder="abc@gmail.com"
             className="w-100 bg-white p-4 text-black"
-            value={email}                       // ✅ controlled input
-            onChange={(event) => setEmail(event.target.value)}
+            value={semail}                       
+            onChange={(event) => setSEmail(event.target.value)}
             required
           />
 
@@ -47,13 +53,13 @@ export default function SignUpPage() {
             type="password"
             placeholder="XXXXX"
             className="w-100 bg-white p-4 text-black"
-            value={password}                    // ✅ controlled input
-            onChange={(event) => setPassword(event.target.value)}
+            value={spassword}                   
+            onChange={(event) => setSPassword(event.target.value)}
             required
           />
 
           <button
-            onClick={handleSignup}              // ✅ cleaner handler
+            onClick={handleSignup}              
             className="bg-amber-700 p-3 my-3 text-white w-50 mx-auto rounded-2xl"
           >
             Sign Up
