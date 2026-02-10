@@ -13,38 +13,26 @@ export default function SignInPage() {
   const setUserEmail = useUserStore((state) => state.setUserEmail);
   //  const semail = useUserStore((state) => state.email);
   //  const spassword = useUserStore((state) => state.password);
-
- const handleLogin = async () => {
+const handleLogin = async () => {
   if (!email || !password) {
     alert("Please fill all fields");
     return;
   }
 
   try {
-    const user = await loginWithEmail(email, password);
+    await loginWithEmail(email, password);
 
-    if (!user) return;
+    // save email in zustand store
+    setUserEmail(email);
 
-    setUserEmail(email); 
+    alert("Login successful!");
     router.push("/dashboard");
+
   } catch (error) {
     console.error("Login failed:", error);
     alert("Invalid email or password");
   }
-
-
-
-    try {
-      await loginWithEmail(email, password);
-      alert("Account logged in!");
-      // setUserEmail(email);
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Failed to login. Check your credentials.");
-    }
-  };
-
+};
   return (
     <div className="min-h-screen flex justify-center items-center p-10 bg-amber-500">
       <div>
@@ -52,7 +40,7 @@ export default function SignInPage() {
       </div>
       <div className="bg-white flex flex-col shadow-2xl rounded-2xl p-10 w-[500px] hover:scale-[1.02]">
         <h1 className="text-3xl font-bold text-center text-amber-700 mb-6">
-          Sign In
+          Login 
         </h1>
          
         <input

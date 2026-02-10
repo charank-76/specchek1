@@ -102,7 +102,7 @@ export default function Home() {
        
          <button 
           onClick={clickTofeed}
-          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition "
+          className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 transition animate-bounce "
         >
           Feedback
         </button>
