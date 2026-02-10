@@ -7,7 +7,7 @@ export async function POST(req) {
     }
 
     //put the key here
-    const apiKey = "AIzaSyAow87DUyX_ENucJRhV3VlLUx95OuwuGTo";
+    const apiKey = "AIzaSyC2Mpk7T6w5GdUv1rbLx71Kq9xdCeeQmDo";
 
     const prompt = `
 You are a strict contract risk analyzer.
